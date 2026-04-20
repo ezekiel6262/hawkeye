@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { Play, ChevronDown, Loader2, X, BookOpen, Layers, ShieldAlert, CheckCircle2, Sparkles, Link2, FileCode } from "lucide-react";
+import { Play, ChevronDown, Loader2, X, BookOpen, Layers, ShieldAlert, CheckCircle2, Sparkles, Image as ImageIcon, FileCode, Link2 } from "lucide-react";
 import HawkeyeLogo from "./components/HawkeyeLogo";
 import AuditReport from "./components/AuditReport";
 import AddressInput, { FetchedMeta } from "./components/AddressInput";
@@ -113,14 +113,17 @@ export default function Home() {
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
-            {[{ label: "Documentation", icon: <BookOpen size={12} /> }, { label: "Examples", icon: <Layers size={12} /> }].map(item => (
-              <a key={item.label} href="#"
-                style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.45)", textDecoration: "none" }}
-                onMouseEnter={e => (e.currentTarget.style.color = "white")}
-                onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}>
-                {item.icon}{item.label}
-              </a>
-            ))}
+            {[
+  { label: "Prompt Detector", href: "/prompt", icon: <ImageIcon size={12} /> },
+  { label: "Documentation",   href: "#",        icon: <BookOpen size={12} /> },
+].map(item => (
+  <a key={item.label} href={item.href}
+    style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.45)", textDecoration: "none" }}
+    onMouseEnter={e => (e.currentTarget.style.color = "white")}
+    onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}>
+    {item.icon}{item.label}
+  </a>
+))}
           </div>
           <a href="https://github.com/ezekiel6262/hawkeye" target="_blank" rel="noopener"
             style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.6)", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", borderRadius: 8, padding: "6px 12px", textDecoration: "none" }}
@@ -138,14 +141,14 @@ export default function Home() {
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 40 }}>
             <div style={{ maxWidth: 520 }}>
               <div style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11, fontWeight: 600, padding: "5px 12px", borderRadius: 20, background: "rgba(37,99,168,0.3)", color: "#7EB3D8", border: "1px solid rgba(59,130,196,0.25)", marginBottom: 16 }}>
-                <Sparkles size={10} /> AI-powered · Instant analysis
+                <Sparkles size={10} /> Instant analysis
               </div>
               <h1 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 36, fontWeight: 500, color: "white", lineHeight: 1.2, letterSpacing: "-0.02em", marginBottom: 14 }}>
                 Smart contract security,{" "}
                 <em style={{ color: "#7EB3D8", fontStyle: "italic" }}>redefined.</em>
               </h1>
               <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", margin: 0 }}>
-                Paste any Solidity contract or enter a verified contract address — get a structured CVE-style security report in seconds.
+                Paste any Solidity contract or enter a verified contract address and get a structured CVE-style security report in seconds.
               </p>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
@@ -412,7 +415,7 @@ export default function Home() {
             <span style={{ fontSize: 11, color: "#CBD5E1" }}>Not a substitute for a professional audit</span>
             <span style={{ fontSize: 11, display: "flex", alignItems: "center", gap: 5, color: "#94A3B8" }}>
               <Sparkles size={10} style={{ color: "#2563A8" }} />
-              Powered by Claude
+              Powered by Hawkeye
             </span>
           </div>
         </div>
