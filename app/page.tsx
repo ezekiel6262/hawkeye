@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { Play, ChevronDown, Loader2, X, BookOpen, Layers, ShieldAlert, CheckCircle2, Sparkles, Image as ImageIcon, FileCode, Link2 } from "lucide-react";
+import { Play, ChevronDown, Loader2, X, BookOpen, Layers, ShieldAlert, CheckCircle2, Sparkles, Image as ImageIcon, FileCode, Link2, Video } from "lucide-react";
 import HawkeyeLogo from "./components/HawkeyeLogo";
 import AuditReport from "./components/AuditReport";
 import AddressInput, { FetchedMeta } from "./components/AddressInput";
@@ -115,6 +115,7 @@ export default function Home() {
           <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
             {[
   { label: "Prompt Detector", href: "/prompt", icon: <ImageIcon size={12} /> },
+  { label: "Video Prompts", href: "/video-prompt", icon: <Video size={12} /> },
   { label: "Documentation",   href: "#",        icon: <BookOpen size={12} /> },
 ].map(item => (
   <a key={item.label} href={item.href}

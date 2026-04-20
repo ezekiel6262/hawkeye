@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Hawkeye — Smart Contract Security Auditor",
+  title: "Hawkeye - Smart Contract Security Auditor",
   description: "AI-powered Solidity security analysis. Structured CVE-style reports in seconds.",
   keywords: ["smart contract", "solidity", "security audit", "vulnerability scanner", "web3"],
 };
