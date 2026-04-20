@@ -1,4 +1,5 @@
 export type Severity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "INFO";
+export type RiskScore = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "SAFE";
 
 export interface Finding {
   id: string;
@@ -12,7 +13,7 @@ export interface Finding {
 }
 
 export interface AuditResult {
-  riskScore: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "SAFE";
+  riskScore: RiskScore;
   contractName: string;
   summary: string;
   findings: Finding[];
@@ -21,53 +22,21 @@ export interface AuditResult {
 }
 
 export const SEVERITY_CONFIG: Record<Severity, {
-  label: string;
-  color: string;
-  bg: string;
-  border: string;
-  dot: string;
+  label: string; color: string; bg: string; border: string;
 }> = {
-  CRITICAL: {
-    label: "Critical",
-    color: "#FF4444",
-    bg: "#1A0A0A",
-    border: "#3D1010",
-    dot: "bg-red-500",
-  },
-  HIGH: {
-    label: "High",
-    color: "#FF8C00",
-    bg: "#1A0F00",
-    border: "#3D2200",
-    dot: "bg-orange-500",
-  },
-  MEDIUM: {
-    label: "Medium",
-    color: "#FFD700",
-    bg: "#1A1700",
-    border: "#3D3800",
-    dot: "bg-yellow-400",
-  },
-  LOW: {
-    label: "Low",
-    color: "#4CAF50",
-    bg: "#0A1A0A",
-    border: "#103D10",
-    dot: "bg-green-500",
-  },
-  INFO: {
-    label: "Info",
-    color: "#60A5FA",
-    bg: "#0A0F1A",
-    border: "#10203D",
-    dot: "bg-blue-400",
-  },
+  CRITICAL: { label: "Critical", color: "#DC2626", bg: "#FEF2F2", border: "#FECACA" },
+  HIGH:     { label: "High",     color: "#EA580C", bg: "#FFF7ED", border: "#FED7AA" },
+  MEDIUM:   { label: "Medium",   color: "#D97706", bg: "#FFFBEB", border: "#FDE68A" },
+  LOW:      { label: "Low",      color: "#16A34A", bg: "#F0FDF4", border: "#BBF7D0" },
+  INFO:     { label: "Info",     color: "#2563EB", bg: "#EFF6FF", border: "#BFDBFE" },
 };
 
-export const RISK_SCORE_CONFIG = {
-  CRITICAL: { label: "Critical Risk", color: "#FF4444", bg: "#3D1010" },
-  HIGH:     { label: "High Risk",     color: "#FF8C00", bg: "#3D2200" },
-  MEDIUM:   { label: "Medium Risk",   color: "#FFD700", bg: "#3D3800" },
-  LOW:      { label: "Low Risk",      color: "#4CAF50", bg: "#103D10" },
-  SAFE:     { label: "No Issues",     color: "#4CAF50", bg: "#103D10" },
+export const RISK_CONFIG: Record<RiskScore, {
+  label: string; color: string; bg: string; border: string;
+}> = {
+  CRITICAL: { label: "Critical Risk",   color: "#DC2626", bg: "#FEF2F2", border: "#FECACA" },
+  HIGH:     { label: "High Risk",       color: "#EA580C", bg: "#FFF7ED", border: "#FED7AA" },
+  MEDIUM:   { label: "Medium Risk",     color: "#D97706", bg: "#FFFBEB", border: "#FDE68A" },
+  LOW:      { label: "Low Risk",        color: "#16A34A", bg: "#F0FDF4", border: "#BBF7D0" },
+  SAFE:     { label: "No Issues Found", color: "#16A34A", bg: "#F0FDF4", border: "#BBF7D0" },
 };

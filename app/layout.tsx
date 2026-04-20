@@ -1,17 +1,20 @@
 import type { Metadata } from "next";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Hawkeye — AI Smart Contract Auditor",
-  description: "Spot vulnerabilities others miss. AI-powered Solidity security analysis.",
+  title: "Hawkeye — Smart Contract Security Auditor",
+  description: "AI-powered Solidity security analysis. Structured CVE-style reports in seconds.",
+  keywords: ["smart contract", "solidity", "security audit", "vulnerability scanner", "web3"],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      <body className="noise">{children}</body>
+    <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.bunny.net" />
+        
+      </head>
+      <body>{children}</body>
     </html>
   );
 }

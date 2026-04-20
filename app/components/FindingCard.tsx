@@ -1,20 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Copy, Check, Code2 } from "lucide-react";
+import { ChevronDown, Copy, Check, MapPin, Tag } from "lucide-react";
 import { Finding, SEVERITY_CONFIG } from "../types";
 
-interface FindingCardProps {
-  finding: Finding;
-  index: number;
-}
-
-export default function FindingCard({ finding, index }: FindingCardProps) {
+export default function FindingCard({ finding, index }: { finding: Finding; index: number }) {
   const [expanded, setExpanded] = useState(index === 0);
   const [copied, setCopied] = useState(false);
-  const config = SEVERITY_CONFIG[finding.severity];
+  const cfg = SEVERITY_CONFIG[finding.severity];
 
-  const copyRemediation = async () => {
+  const copy = async () => {
     await navigator.clipboard.writeText(finding.remediation);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -22,96 +17,110 @@ export default function FindingCard({ finding, index }: FindingCardProps) {
 
   return (
     <div
-      className="finding-card rounded-lg border overflow-hidden"
+      className="finding-enter rounded-xl overflow-hidden bg-white"
       style={{
-        backgroundColor: config.bg,
-        borderColor: config.border,
-        animationDelay: `${index * 80}ms`,
+        border: `1px solid ${cfg.border}`,
+        boxShadow: "0 1px 3px rgba(11,31,58,0.05)",
+        animationDelay: `${index * 60}ms`,
       }}
     >
+      {/* Accent bar */}
+      <div style={{ height: "3px", background: cfg.color }} />
+
       {/* Header */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full text-left p-4 flex items-start gap-3 hover:bg-white/[0.02] transition-colors"
+        className="w-full text-left transition-colors"
+        style={{ background: expanded ? cfg.bg : "white" }}
       >
-        {/* Severity badge */}
-        <div
-          className="shrink-0 mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold tracking-widest uppercase"
-          style={{
-            color: config.color,
-            border: `1px solid ${config.border}`,
-            backgroundColor: `${config.color}18`,
-          }}
-        >
-          {config.label}
-        </div>
+        <div className="p-4 flex items-start gap-3">
+          <span
+            className="shrink-0 mt-0.5 text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md"
+            style={{ color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.border}` }}
+          >
+            {cfg.label}
+          </span>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-semibold text-text-primary truncate">
-              {finding.title}
-            </span>
-            {expanded ? (
-              <ChevronUp size={14} className="shrink-0 text-text-muted" />
-            ) : (
-              <ChevronDown size={14} className="shrink-0 text-text-muted" />
-            )}
-          </div>
-
-          <div className="flex items-center gap-3 mt-1">
-            <span className="text-xs text-text-muted">{finding.category}</span>
-            {finding.lines.length > 0 && (
-              <span className="text-xs" style={{ color: config.color, opacity: 0.7 }}>
-                <Code2 size={10} className="inline mr-1" />
-                Line{finding.lines.length > 1 ? "s" : ""} {finding.lines.join(", ")}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-[13px] font-semibold leading-snug" style={{ color: "#0B1F3A" }}>
+                {finding.title}
+              </p>
+              <ChevronDown
+                size={14}
+                style={{
+                  color: "#CBD5E1",
+                  transform: expanded ? "rotate(180deg)" : "none",
+                  transition: "transform 0.2s",
+                  flexShrink: 0,
+                  marginTop: 2,
+                }}
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-3 mt-1.5">
+              <span className="flex items-center gap-1 text-[11px]" style={{ color: "#94A3B8" }}>
+                <Tag size={9} />{finding.category}
               </span>
-            )}
-            {finding.cweId && (
-              <span className="text-xs text-text-muted">{finding.cweId}</span>
-            )}
+              {finding.lines.length > 0 && (
+                <span className="flex items-center gap-1 text-[11px] font-medium" style={{ color: cfg.color }}>
+                  <MapPin size={9} />
+                  Line{finding.lines.length > 1 ? "s" : ""} {finding.lines.join(", ")}
+                </span>
+              )}
+              {finding.cweId && (
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded"
+                  style={{ background: "#F1F5F9", color: "#64748B" }}>
+                  {finding.cweId}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </button>
 
-      {/* Expanded content */}
+      {/* Body */}
       {expanded && (
-        <div className="px-4 pb-4 space-y-3 border-t border-white/[0.04]">
-          {/* Description */}
-          <div className="pt-3">
-            <p className="text-xs font-medium text-text-muted uppercase tracking-wider mb-1.5">
-              Description
-            </p>
-            <p className="text-sm text-text-secondary leading-relaxed">
-              {finding.description}
-            </p>
-          </div>
-
-          {/* Remediation */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <p className="text-xs font-medium text-text-muted uppercase tracking-wider">
-                Remediation
+        <div style={{ borderTop: `1px solid ${cfg.border}`, background: `${cfg.bg}70` }}>
+          <div className="p-4 space-y-4">
+            <div>
+              <p className="text-[9px] font-bold uppercase tracking-widest mb-2" style={{ color: "#94A3B8" }}>
+                What's the issue
               </p>
-              <button
-                onClick={copyRemediation}
-                className="flex items-center gap-1 text-xs text-text-muted hover:text-text-secondary transition-colors"
-              >
-                {copied ? (
-                  <><Check size={11} /><span>Copied</span></>
-                ) : (
-                  <><Copy size={11} /><span>Copy</span></>
-                )}
-              </button>
+              <p className="text-[12.5px] leading-relaxed" style={{ color: "#475569" }}>
+                {finding.description}
+              </p>
             </div>
-            <div
-              className="text-sm leading-relaxed p-3 rounded font-mono text-[12px]"
-              style={{
-                backgroundColor: "#0A0B0E",
-                border: "1px solid #1E2130",
-                color: "#A8B4CC",
-              }}
-            >
-              {finding.remediation}
+            <div style={{ height: "1px", background: cfg.border }} />
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "#94A3B8" }}>
+                  How to fix it
+                </p>
+                <button
+                  onClick={copy}
+                  className="flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg transition-all"
+                  style={{
+                    color: copied ? "#16A34A" : "#64748B",
+                    background: "white",
+                    border: `1px solid ${copied ? "#BBF7D0" : "#E2E8F0"}`,
+                  }}
+                >
+                  {copied ? <Check size={10} /> : <Copy size={10} />}
+                  {copied ? "Copied!" : "Copy fix"}
+                </button>
+              </div>
+              <div
+                className="rounded-lg p-3.5 text-[11.5px] leading-relaxed font-mono"
+                style={{
+                  background: "white",
+                  border: "1px solid #E2E8F0",
+                  color: "#475569",
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                }}
+              >
+                {finding.remediation}
+              </div>
             </div>
           </div>
         </div>
