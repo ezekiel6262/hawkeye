@@ -45,6 +45,13 @@ export async function POST(req: NextRequest) {
   try {
     const { code } = await req.json();
 
+    if (code.length > 50_000) {
+  return NextResponse.json(
+    { error: "Contract too large. Maximum 50,000 characters." },
+    { status: 413 }
+  );
+}
+
     if (!code || typeof code !== "string") {
       return NextResponse.json({ error: "No code provided" }, { status: 400 });
     }
