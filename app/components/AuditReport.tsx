@@ -1,8 +1,17 @@
 "use client";
 
-import { Download, CheckCircle, AlertTriangle, Clock, Zap, FileText, ShieldCheck } from "lucide-react";
+import { useState } from "react";
 import { AuditResult, SEVERITY_CONFIG, RISK_CONFIG, Severity } from "../types";
 import FindingCard from "./FindingCard";
+import TweetThread from "./TweetThread";
+import { exportToPDF } from "./PdfExport";
+import { Download, CheckCircle, AlertTriangle, Clock, Zap, FileText, ShieldCheck, FileDown } from "lucide-react";
+
+const TwitterIcon = ({ size = 12, style }: { size?: number; style?: React.CSSProperties }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" style={style}>
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+);
 
 export default function AuditReport({ result }: { result: AuditResult }) {
   const riskCfg = RISK_CONFIG[result.riskScore];
@@ -15,7 +24,10 @@ export default function AuditReport({ result }: { result: AuditResult }) {
     return acc;
   }, {} as Record<Severity, number>);
 
-  const handleExport = () => {
+  const [showThread, setShowThread] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
+
+  const handleExportTxt = () => {
     const lines = [
       "═".repeat(52),
       "  HAWKEYE SECURITY AUDIT REPORT",
@@ -65,8 +77,21 @@ export default function AuditReport({ result }: { result: AuditResult }) {
     a.click();
   };
 
+  const handleExportPdf = async () => {
+    setPdfLoading(true);
+    try {
+      await exportToPDF(result);
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+
+      {showThread && (
+        <TweetThread result={result} onClose={() => setShowThread(false)} />
+      )}
 
       {/* ── Risk header ── */}
       <div style={{
@@ -76,7 +101,6 @@ export default function AuditReport({ result }: { result: AuditResult }) {
         {/* Top row */}
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>
           <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-            {/* Icon */}
             <div style={{
               width: 40, height: 40, borderRadius: 10, flexShrink: 0,
               display: "flex", alignItems: "center", justifyContent: "center",
@@ -86,7 +110,6 @@ export default function AuditReport({ result }: { result: AuditResult }) {
                 ? <ShieldCheck size={18} style={{ color: riskCfg.color }} />
                 : <AlertTriangle size={18} style={{ color: riskCfg.color }} />}
             </div>
-            {/* Labels */}
             <div>
               <div style={{
                 fontFamily: "'Fraunces', Georgia, serif",
@@ -107,19 +130,52 @@ export default function AuditReport({ result }: { result: AuditResult }) {
             </div>
           </div>
 
-          {/* Export */}
-          <button
-            onClick={handleExport}
-            style={{
-              display: "flex", alignItems: "center", gap: 5,
-              fontSize: 12, fontWeight: 500, color: "#64748B",
-              background: "white", border: "1px solid #E2E8F0",
-              borderRadius: 8, padding: "7px 12px", cursor: "pointer",
-              flexShrink: 0, whiteSpace: "nowrap" as const,
-            }}
-          >
-            <Download size={12} /> Export report
-          </button>
+          {/* Action buttons */}
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+            {/* Tweet thread */}
+            <button
+              onClick={() => setShowThread(true)}
+              style={{
+                display: "flex", alignItems: "center", gap: 5,
+                fontSize: 12, fontWeight: 500, color: "#1D4ED8",
+                background: "#EFF6FF", border: "1px solid #BFDBFE",
+                borderRadius: 8, padding: "7px 11px", cursor: "pointer",
+                whiteSpace: "nowrap" as const,
+              }}
+            >
+              <TwitterIcon size={12} /> Thread
+            </button>
+
+            {/* PDF export */}
+            <button
+              onClick={handleExportPdf}
+              disabled={pdfLoading}
+              style={{
+                display: "flex", alignItems: "center", gap: 5,
+                fontSize: 12, fontWeight: 500, color: "#64748B",
+                background: "white", border: "1px solid #E2E8F0",
+                borderRadius: 8, padding: "7px 11px", cursor: "pointer",
+                whiteSpace: "nowrap" as const,
+              }}
+            >
+              <FileDown size={12} />
+              {pdfLoading ? "Generating…" : "PDF"}
+            </button>
+
+            {/* TXT export */}
+            <button
+              onClick={handleExportTxt}
+              style={{
+                display: "flex", alignItems: "center", gap: 5,
+                fontSize: 12, fontWeight: 500, color: "#64748B",
+                background: "white", border: "1px solid #E2E8F0",
+                borderRadius: 8, padding: "7px 11px", cursor: "pointer",
+                whiteSpace: "nowrap" as const,
+              }}
+            >
+              <Download size={12} /> TXT
+            </button>
+          </div>
         </div>
 
         {/* Summary */}
@@ -160,7 +216,6 @@ export default function AuditReport({ result }: { result: AuditResult }) {
 
       {/* ── Findings ── */}
       <div style={{ flex: 1, overflowY: "auto", paddingRight: 2 }}>
-
         {sorted.length === 0 ? (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "48px 0", gap: 12 }}>
             <CheckCircle size={28} style={{ color: "#16A34A" }} />
@@ -169,19 +224,16 @@ export default function AuditReport({ result }: { result: AuditResult }) {
           </div>
         ) : (
           <>
-            {/* Section label */}
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
               <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#94A3B8", whiteSpace: "nowrap" as const }}>
                 Security Findings
               </span>
               <div style={{ flex: 1, height: 1, background: "#F1F5F9" }} />
             </div>
-
             {sorted.map((f, i) => <FindingCard key={f.id} finding={f} index={i} />)}
           </>
         )}
 
-        {/* Gas optimizations */}
         {result.gasOptimizations?.length ? (
           <div style={{
             marginTop: 4, background: "#F8FAFC",
